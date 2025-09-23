@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,31 +61,52 @@ namespace Broker
                 Socket senderSocket = connection.socket;
                 SocketError response;
                 int buffSize = senderSocket.EndReceive(asyncResult, out response);
-                if (response == SocketError.Success)
-                {
-                    byte[] payload = new byte[buffSize];
-                    Array.Copy(connection.Data, payload, payload.Length);
 
-                    PayloadHandler.Handle(payload, connection);
+                if (buffSize == 0 || response != SocketError.Success)
+                {
+                    Console.WriteLine($"Subscriber disconnected: {connection.Adress}");
+                    ConnectionsStorage.Remove(connection.Adress);
+                    connection.socket.Close();
+                    return;
+                }
+
+                byte[] payload = new byte[buffSize];
+                Array.Copy(connection.Data, payload, payload.Length);
+
+                PayloadHandler.Handle(payload, connection);
+
+                var payloadString = Encoding.UTF8.GetString(payload);
+                if (!payloadString.StartsWith("subscribe#"))
+                {
+                    Payload message = JsonConvert.DeserializeObject<Payload>(payloadString);
+                    foreach (var conn in ConnectionsStorage.GetSubscribersByTopic(message.Topic))
+                    {
+                        try
+                        {
+                            conn.socket.Send(Encoding.UTF8.GetBytes(payloadString));
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"{ex.Message}");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error receiving data from {connection.Adress}: {ex.Message}");
-                //connection.socket.Close();
             }
             finally
             {
                 try
-                { 
-                    connection.socket.BeginReceive(connection.Data, 0, connection.Data.Length, 
+                {
+                    connection.socket.BeginReceive(connection.Data, 0, connection.Data.Length,
                         SocketFlags.None, ReceiveCallback, connection);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"{e.Message}");
-                    var address = connection.socket.RemoteEndPoint.ToString();
-                    ConnectionsStorage.Remove(address);
+                    Console.WriteLine($"Subscriber disconnected (left): {connection.Adress}");
+                    ConnectionsStorage.Remove(connection.Adress);
                     connection.socket.Close();
                 }
             }

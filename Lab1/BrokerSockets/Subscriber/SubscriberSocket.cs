@@ -12,10 +12,9 @@ namespace Subscriber
     class SubscriberSocket
     {
         private Socket _socket;
-        private string _topic;
-        public SubscriberSocket(string topic)
+        private List<string> _topics = new List<string>();
+        public SubscriberSocket()
         {
-            _topic = topic;
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
@@ -29,8 +28,10 @@ namespace Subscriber
         {
             if(_socket.Connected)
             {
-                Console.WriteLine("Connected to Broker");
-                Subscribe();
+                foreach (var topic in _topics)
+                {
+                    SendSubscribe(topic);
+                }
                 StartReceiving();
             }
             else
@@ -39,10 +40,20 @@ namespace Subscriber
             }
         }
 
-        private void Subscribe()
+        public void Subscribe(string topic)
         {
-            var data = Encoding.UTF8.GetBytes("subscribe#" + _topic);
+            _topics.Add(topic);
+            if (_socket.Connected)
+            {
+                SendSubscribe(topic);
+            }
+        }
+
+        private void SendSubscribe(string topic)
+        {
+            var data = Encoding.UTF8.GetBytes("subscribe#" + topic);
             Send(data);
+            Console.WriteLine($"Subscribed to topic: {topic}");
         }
 
         private void StartReceiving()

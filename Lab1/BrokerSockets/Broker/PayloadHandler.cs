@@ -16,8 +16,10 @@ namespace Broker
 
             if (payloadString.StartsWith("subscribe#"))
             {
-                connectionInfo.Topic = payloadString.Split("subscribe#").LastOrDefault();
-                ConnectionsStorage.Add(connectionInfo);
+                string topic = payloadString.Split("subscribe#")[1];
+                connectionInfo.Topics.Add(topic); 
+                ConnectionsStorage.AddOrUpdate(connectionInfo, topic); 
+                Console.WriteLine($"Subscriber {connectionInfo.Adress} subscribed to topic: {topic}");
             }
             else
             {
