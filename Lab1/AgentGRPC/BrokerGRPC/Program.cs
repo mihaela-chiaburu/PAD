@@ -9,6 +9,7 @@ builder.Services.AddGrpc();
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 builder.Services.AddSingleton<IMessageStorageService, MessageStorageService>();
 builder.Services.AddSingleton<IConnectionStorageService, ConnectionStorageService>();
+builder.Services.AddHostedService<SenderWorker>();
 
 var app = builder.Build();
 

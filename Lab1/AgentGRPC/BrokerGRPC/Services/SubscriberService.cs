@@ -15,10 +15,22 @@ namespace BrokerGRPC.Services
 
         public override Task<SubscribeReply> Subscribe(SubscribeRequest request, ServerCallContext context)
         {
-            var conncetion = new Connection(request.Address, request.Topic);
+            Console.WriteLine($"New cliet trying to subscribe: {request.Address} {request.Topic}");
 
-            _connectionStorage.AddConnection(conncetion);
-            Console.WriteLine($"New subscriber with address {request.Address} subscribed to topic {request.Topic}");
+            try
+            {
+                var conncetion = new Connection(request.Address, request.Topic);
+                _connectionStorage.AddConnection(conncetion);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not add the new connection {ex.Message}");
+                Console.WriteLine($"Error subscribing client: {request.Address} {request.Topic}");
+                return Task.FromResult(new SubscribeReply()
+                {
+                    IsSuccess = false,
+                });
+            }
 
             return Task.FromResult(new SubscribeReply()
             {
