@@ -18,11 +18,21 @@ namespace Broker
             _locker = new object();
         }
 
-        public static void Add(ConnectionInfo connection)
+        public static void AddOrUpdate(ConnectionInfo connection, string topic)
         {
             lock (_locker)
             {
-                _connections.Add(connection);
+                var existing = _connections.FirstOrDefault(c => c.Adress == connection.Adress);
+                if (existing != null)
+                {
+                    if (!existing.Topics.Contains(topic))
+                        existing.Topics.Add(topic);
+                }
+                else
+                {
+                    connection.Topics.Add(topic);
+                    _connections.Add(connection);
+                }
             }
         }
 
@@ -34,14 +44,20 @@ namespace Broker
             }
         }
 
-        public static List<ConnectionInfo> GetConnectionsByTopic(string topic)
+        public static List<ConnectionInfo> GetSubscribersByTopic(string topic)
         {
-            List<ConnectionInfo> selectedConnections;
             lock (_locker)
             {
-                selectedConnections = _connections.Where(c => c.Topic == topic).ToList();
+                return _connections.Where(c => c.Topics.Contains(topic)).ToList();
             }
-            return selectedConnections;
+        }
+
+        public static List<ConnectionInfo> GetAll()
+        {
+            lock (_locker)
+            {
+                return _connections.ToList();
+            }
         }
     }
 }

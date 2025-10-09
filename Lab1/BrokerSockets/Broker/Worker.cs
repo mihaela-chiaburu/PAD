@@ -20,7 +20,7 @@ namespace Broker
                     var payload = PayloadStorage.GetNext();
                     if (payload != null)
                     {
-                        var connections = ConnectionsStorage.GetConnectionsByTopic(payload.Topic);
+                        var connections = ConnectionsStorage.GetSubscribersByTopic(payload.Topic);
                         foreach (var connection in connections)
                         {
                             var payloadString = JsonConvert.SerializeObject(payload);

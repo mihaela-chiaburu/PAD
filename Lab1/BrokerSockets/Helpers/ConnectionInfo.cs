@@ -11,7 +11,7 @@ namespace Helpers
     {
         public Socket socket { get; set; }
         public string Adress { get; set; }
-        public string Topic { get; set; }
+        public List<string> Topics = new List<string>();
         public byte[] Data { get; set; }
         public const int BUFF_SIZE = 1024;
 
