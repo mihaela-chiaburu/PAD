@@ -3,7 +3,7 @@ using Common;
 using Grpc.Net.Client;
 using GrpcAgent;
 
-Console.WriteLine("Publisher");
+Console.WriteLine("Sender");
 
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 var channel = GrpcChannel.ForAddress(EndpointsConstants.BrokerAddress);

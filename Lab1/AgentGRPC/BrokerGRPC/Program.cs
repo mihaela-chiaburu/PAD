@@ -2,6 +2,8 @@ using BrokerGRPC.Services;
 using BrokerGRPC.Services.Interfaces;
 using Common;
 
+Console.WriteLine("Broker");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Receiver.Services;
 
+Console.WriteLine("Receiver");
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGrpc();
