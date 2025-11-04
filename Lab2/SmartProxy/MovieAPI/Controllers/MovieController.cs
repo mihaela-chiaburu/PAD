@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieAPI.Repositories;
+using MovieAPI.Services;
 
 namespace MovieAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace MovieAPI.Controllers
     public class MovieController : ControllerBase
     {
         private readonly IRepository<Movie> _movieRepository;
-        public MovieController(IRepository<Movie> movieRepository)
+        private readonly ISyncService<Movie> _moviesyncService;
+        public MovieController(IRepository<Movie> movieRepository, ISyncService<Movie> movieSyncService)
         {
             _movieRepository = movieRepository;
+            _moviesyncService = movieSyncService;
         }
 
         [HttpGet]
@@ -39,6 +42,8 @@ namespace MovieAPI.Controllers
         {
             movie.LastChangedAt = DateTime.UtcNow;
             _movieRepository.InsertRecord(movie);
+
+            _moviesyncService.Upsert(movie);
             return Ok(movie);
         }
 
@@ -47,9 +52,21 @@ namespace MovieAPI.Controllers
         {
             movie.LastChangedAt = DateTime.UtcNow;
             _movieRepository.UpsertRecord(movie);
+            _moviesyncService.Upsert(movie);
             return Ok(movie);
         }
 
+        [HttpPut("sync")]
+        public IActionResult UpsertSync(Movie movie)
+        {
+            var existingMovie = _movieRepository.GetRecordById(movie.Id);
+            if (existingMovie == null || movie.LastChangedAt > existingMovie.LastChangedAt)
+            {
+                movie.LastChangedAt = DateTime.UtcNow;
+                _movieRepository.UpsertRecord(movie);
+            }
+            return Ok(movie);
+        }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
@@ -60,7 +77,20 @@ namespace MovieAPI.Controllers
                 return NotFound();
             }
             _movieRepository.DeleteRecord(id);
+            movie.LastChangedAt = DateTime.UtcNow;
+            _moviesyncService.Delete(movie);
             return Ok("Deteletd " + id);
+        }
+
+        [HttpDelete("sync")]
+        public IActionResult DeleteSync(Movie movie)
+        {
+            var existingMovie = _movieRepository.GetRecordById(movie.Id);
+            if (existingMovie != null || movie.LastChangedAt > existingMovie.LastChangedAt)
+            {
+                _movieRepository.DeleteRecord(movie.Id);
+            }
+            return Ok(movie);
         }
     }
 }
