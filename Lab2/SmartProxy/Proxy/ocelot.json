@@ -1,0 +1,28 @@
+﻿{
+  "Routes": [
+    {
+      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamPathTemplate": "/{url}",
+      "DownstreamPathTemplate": "/{url}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 9001
+        }
+      ]
+    },
+    {
+      "UpstreamHttpMethod": [ "Put", "Post", "Delete" ],
+      "UpstreamPathTemplate": "/{url}",
+      "DownstreamPathTemplate": "/{url}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 9001
+        }
+      ]
+    }
+  ]
+}
