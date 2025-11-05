@@ -12,8 +12,8 @@ using MovieAPI.Repositories;
 namespace MovieAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251104090653_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251105131746_InitialDataInput")]
+    partial class InitialDataInput
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,7 +5,7 @@
 namespace MovieAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabase2 : Migration
+    public partial class InitialDataInputDb2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
