@@ -5,14 +5,14 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiază fișierele .csproj pentru toate proiectele necesare
+# Copiază .csproj files
 COPY ["MovieAPI/MovieAPI.csproj", "MovieAPI/"]
 COPY ["Common/Common.csproj", "Common/"]
 
-# Restore dependencies
+# Restore
 RUN dotnet restore "MovieAPI/MovieAPI.csproj"
 
-# Copiază tot codul sursă
+# Copiază restul fișierelor
 COPY ["MovieAPI/", "MovieAPI/"]
 COPY ["Common/", "Common/"]
 
