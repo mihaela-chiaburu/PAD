@@ -5,6 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Path-urile sunt relative la Lab2/SmartProxy/
 COPY ["Proxy/Proxy.csproj", "Proxy/"]
 RUN dotnet restore "Proxy/Proxy.csproj"
 
