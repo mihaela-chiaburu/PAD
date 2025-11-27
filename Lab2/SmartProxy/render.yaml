@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: movieapi
-    runtime: docker
-    dockerfilePath: ./MovieAPI/Dockerfile
-    dockerContext: ./
