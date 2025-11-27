@@ -5,7 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Path-urile sunt relative la SmartProxy/ (build context)
+# Path-urile sunt relative la SmartProxyInstance2/ (build context)
 COPY ["MovieAPI/MovieAPI.csproj", "MovieAPI/"]
 COPY ["Common/Common.csproj", "Common/"]
 
