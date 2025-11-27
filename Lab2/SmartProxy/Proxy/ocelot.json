@@ -11,17 +11,17 @@
         "Header": "OC-Caching-Control",
         "EnableContentHashing": false
       },
-      "UpstreamPathTemplate": "/{url}",
-      "DownstreamPathTemplate": "/{url}",
-      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movieapi-instance1.railway.internal",
-          "Port": 443
+          "Host": "movieapi-instance1",
+          "Port": 80
         },
         {
-          "Host": "movieapi-instance2.railway.internal",
-          "Port": 443
+          "Host": "movieapi-instance2",
+          "Port": 80
         }
       ]
     },
@@ -30,19 +30,20 @@
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       },
-      "UpstreamPathTemplate": "/{url}",
-      "DownstreamPathTemplate": "/{url}",
-      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movieapi-instance1.railway.internal",
-          "Port": 443
+          "Host": "movieapi-instance1",
+          "Port": 80
         },
         {
-          "Host": "movieapi-instance2.railway.internal",
-          "Port": 443
+          "Host": "movieapi-instance2",
+          "Port": 80
         }
       ]
     }
-  ]
+  ],
+  "GlobalConfiguration": {}
 }
