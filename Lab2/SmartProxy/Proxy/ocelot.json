@@ -13,15 +13,15 @@
       },
       "UpstreamPathTemplate": "/{url}",
       "DownstreamPathTemplate": "/{url}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 9001
+          "Host": "movieapi-instance1.railway.internal",
+          "Port": 443
         },
         {
-          "Host": "localhost",
-          "Port": 9002
+          "Host": "movieapi-instance2.railway.internal",
+          "Port": 443
         }
       ]
     },
@@ -32,15 +32,15 @@
       },
       "UpstreamPathTemplate": "/{url}",
       "DownstreamPathTemplate": "/{url}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 9001
+          "Host": "movieapi-instance1.railway.internal",
+          "Port": 443
         },
         {
-          "Host": "localhost",
-          "Port": 9002
+          "Host": "movieapi-instance2.railway.internal",
+          "Port": 443
         }
       ]
     }
