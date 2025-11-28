@@ -13,15 +13,15 @@
       },
       "UpstreamPathTemplate": "/api/{everything}",
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movieapi-instance1",
-          "Port": 80
+          "Host": "${MOVIEAPI_DW1_HOST}",
+          "Port": 443
         },
         {
-          "Host": "movieapi-instance2",
-          "Port": 80
+          "Host": "${MOVIEAPI_DW2_HOST}",
+          "Port": 443
         }
       ]
     },
@@ -32,15 +32,15 @@
       },
       "UpstreamPathTemplate": "/api/{everything}",
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movieapi-instance1",
-          "Port": 80
+          "Host": "${MOVIEAPI_DW1_HOST}",
+          "Port": 443
         },
         {
-          "Host": "movieapi-instance2",
-          "Port": 80
+          "Host": "${MOVIEAPI_DW2_HOST}",
+          "Port": 443
         }
       ]
     }
