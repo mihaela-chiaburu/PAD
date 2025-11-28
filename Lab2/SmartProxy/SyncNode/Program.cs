@@ -28,9 +28,6 @@ builder.Services.AddSingleton<IMovieAPISettings>(sp =>
 );
 
 builder.Services.AddSingleton<SyncWorkJobService>();
-builder.Services.AddHostedService<SyncWorkJobService>(sp =>
-    sp.GetRequiredService<SyncWorkJobService>()
-);
 
 var app = builder.Build();
 
