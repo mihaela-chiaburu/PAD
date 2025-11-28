@@ -11,12 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
-var database = Environment.GetEnvironmentVariable("POSTGRES_DB");
-var user = Environment.GetEnvironmentVariable("POSTGRES_USER");
-var pass = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+var host = Environment.GetEnvironmentVariable("PGHOST");
+var port = Environment.GetEnvironmentVariable("PGPORT") ?? "5432";
+var database = Environment.GetEnvironmentVariable("PGDATABASE");
+var user = Environment.GetEnvironmentVariable("PGUSER");
+var pass = Environment.GetEnvironmentVariable("PGPASSWORD");
 
-var connectionString = $"Host={host};Port=5432;Database={database};Username={user};Password={pass}";
+var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={pass}";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
