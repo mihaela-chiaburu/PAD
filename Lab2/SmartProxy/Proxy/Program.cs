@@ -6,8 +6,14 @@ using Ocelot.Configuration.File;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// PORT pentru proxy (Railway) - MOVED UP!
 var webPort = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://0.0.0.0:{webPort}");
+Console.WriteLine($"Proxy will listen on port: {webPort}"); // DEBUG
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(int.Parse(webPort));
+});
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -54,5 +60,7 @@ await app.UseOcelot();
 
 // Endpoint simplu pentru health check
 app.MapGet("/", () => "Smart Proxy is running!");
+
+Console.WriteLine($"Proxy starting...");
 
 app.Run();
