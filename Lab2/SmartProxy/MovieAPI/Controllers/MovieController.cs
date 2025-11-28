@@ -38,7 +38,7 @@ namespace MovieAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Movie movie)
+        public IActionResult Create([FromBody] Movie movie)
         {
             movie.LastChangedAt = DateTime.UtcNow;
             _movieRepository.InsertRecord(movie);
@@ -48,7 +48,7 @@ namespace MovieAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Upsert(Movie movie)
+        public IActionResult Upsert([FromBody] Movie movie)
         {
             movie.LastChangedAt = DateTime.UtcNow;
             _movieRepository.UpsertRecord(movie);
@@ -57,7 +57,7 @@ namespace MovieAPI.Controllers
         }
 
         [HttpPut("sync")]
-        public IActionResult UpsertSync(Movie movie)
+        public IActionResult UpsertSync([FromBody] Movie movie)
         {
             var existingMovie = _movieRepository.GetRecordById(movie.Id);
             if (existingMovie == null || movie.LastChangedAt > existingMovie.LastChangedAt)
@@ -83,7 +83,7 @@ namespace MovieAPI.Controllers
         }
 
         [HttpDelete("sync")]
-        public IActionResult DeleteSync(Movie movie)
+        public IActionResult DeleteSync([FromBody] Movie movie)
         {
             var existingMovie = _movieRepository.GetRecordById(movie.Id);
             if (existingMovie != null || movie.LastChangedAt > existingMovie.LastChangedAt)
