@@ -43,36 +43,44 @@ namespace SyncNode.Services
             return Task.CompletedTask;
         }
 
-        private void DoSendWork(object state)
+        private async void DoSendWork(object state)
         {
-            foreach (var document in documents)
+            foreach (var kvp in documents)
             {
-                SyncEntity entity = null;
-                var isPresent = documents.TryRemove(document.Key, out entity);
-
-                if (isPresent)
+                if (documents.TryRemove(kvp.Key, out var entity))
                 {
                     var receivers = _settings.Hosts.Where(x => !x.Contains(entity.Origin));
 
                     foreach (var receiver in receivers)
                     {
                         var url = $"{receiver}/{entity.ObjectType}/sync";
-
                         try
                         {
-                            var result = HttpClientUtility.SendJson(entity.JsonData, url, entity.SyncType);
-                            if (!result.IsSuccessStatusCode)
+                            using var client = new HttpClient();
+                            HttpResponseMessage response;
+
+                            if (entity.SyncType == "PUT")
+                                response = await client.PutAsJsonAsync(url, entity.JsonData);
+                            else if (entity.SyncType == "POST")
+                                response = await client.PostAsJsonAsync(url, entity.JsonData);
+                            else if (entity.SyncType == "DELETE")
+                                response = await client.DeleteAsync(url);
+                            else
+                                continue;
+
+                            if (!response.IsSuccessStatusCode)
                             {
-                                // log error
+                                Console.WriteLine($"Failed to sync {entity.Id} to {receiver}: {response.StatusCode}");
                             }
                         }
                         catch (Exception ex)
                         {
-                            // log exception
+                            Console.WriteLine($"Exception syncing {entity.Id} to {receiver}: {ex.Message}");
                         }
                     }
                 }
             }
         }
+
     }
 }

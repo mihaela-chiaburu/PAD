@@ -16,10 +16,14 @@ namespace SyncNode.Controllers
         }
 
         [HttpPost]
-        public IActionResult Sync(SyncEntity entity)
+        public IActionResult Sync([FromBody] SyncEntity entity)
         {
+            if (entity == null)
+                return BadRequest("Entity is null");
+
             _workJobService.AddItem(entity);
             return Ok("Sync Node is working!");
         }
+
     }
 }
