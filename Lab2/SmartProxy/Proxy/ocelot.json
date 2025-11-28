@@ -42,7 +42,19 @@
           "Host": "${MOVIEAPI_DW2_HOST}",
           "Port": 443
         }
-      ]
+      ],
+      "HttpHandlerOptions": {
+        "AllowAutoRedirect": false,
+        "UseCookieContainer": false,
+        "UseProxy": false,
+        "DangerousAcceptAnyServerCertificateValidator": true
+      },
+      "DownstreamHeaderTransform": {
+        "Content-Type": "Content-Type"
+      },
+      "UpstreamHeaderTransform": {
+        "Content-Type": "Content-Type"
+      }
     }
   ],
   "GlobalConfiguration": {}
