@@ -6,61 +6,51 @@ using Ocelot.Configuration.File;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PORT pentru proxy (Railway) - MOVED UP!
-var webPort = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-Console.WriteLine($"Proxy will listen on port: {webPort}"); // DEBUG
-
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(int.Parse(webPort));
-});
+// Railway PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(o => o.ListenAnyIP(int.Parse(port)));
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-var movieApiDw1Host = Environment.GetEnvironmentVariable("MOVIEAPI_DW1_HOST");
-var movieApiDw2Host = Environment.GetEnvironmentVariable("MOVIEAPI_DW2_HOST");
+// Railway ENV
+var dw1 = Environment.GetEnvironmentVariable("MOVIEAPI_DW1_HOST");
+var dw2 = Environment.GetEnvironmentVariable("MOVIEAPI_DW2_HOST");
 
+// Load base ocelot.json
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-builder.Services.AddOcelot(builder.Configuration)
+builder.Services
+    .AddOcelot(builder.Configuration)
     .AddCacheManager(x => x.WithDictionaryHandle());
 
-builder.Services.PostConfigure<FileConfiguration>(config =>
+// Inject ENV into Routes
+builder.Services.PostConfigure<FileConfiguration>(cfg =>
 {
-    if (!string.IsNullOrEmpty(movieApiDw1Host) && !string.IsNullOrEmpty(movieApiDw2Host))
+    if (!string.IsNullOrWhiteSpace(dw1) && !string.IsNullOrWhiteSpace(dw2))
     {
-        Console.WriteLine($"Overriding Ocelot config with Railway hosts:");
-        Console.WriteLine($"  DW1: {movieApiDw1Host}");
-        Console.WriteLine($"  DW2: {movieApiDw2Host}");
+        Console.WriteLine("Using Railway hosts for load balancing:");
+        Console.WriteLine($"DW1 = {dw1}");
+        Console.WriteLine($"DW2 = {dw2}");
 
-        var scheme = movieApiDw1Host.Contains("railway.app") ? "https" : "http";
-        var port = scheme == "https" ? 443 : 80;
-
-        foreach (var route in config.Routes)
+        foreach (var route in cfg.Routes)
         {
-            route.DownstreamScheme = scheme;
+            route.DownstreamScheme = "https"; // Railway = HTTPS
+
             route.DownstreamHostAndPorts = new List<FileHostAndPort>
             {
-                new FileHostAndPort { Host = movieApiDw1Host, Port = port },
-                new FileHostAndPort { Host = movieApiDw2Host, Port = port }
+                new FileHostAndPort { Host = dw1, Port = 443 },
+                new FileHostAndPort { Host = dw2, Port = 443 }
             };
         }
-    }
-    else
-    {
-        Console.WriteLine("Using default Ocelot config (local development)");
     }
 });
 
 var app = builder.Build();
 
-// Middleware Ocelot
+// Must be BEFORE endpoints
 await app.UseOcelot();
 
-// Endpoint simplu pentru health check
 app.MapGet("/", () => "Smart Proxy is running!");
-
-Console.WriteLine($"Proxy starting...");
 
 app.Run();
